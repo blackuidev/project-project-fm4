@@ -1,36 +1,36 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useState } from 'react';
+import { Routes, Route, Outlet } from 'react-router-dom';
+import { Header } from '@/components/layout/Header';
+import { Sidebar } from '@/components/layout/Sidebar';
+import HomePage from '@/pages/HomePage';
+import WatchPage from '@/pages/WatchPage';
+import SearchPage from '@/pages/SearchPage';
+import NotFound from '@/pages/NotFound'; // Assuming NotFound exists or will be created
 
+const App: React.FC = () => {
+  // You can manage sidebar open/close state here if needed for desktop
+  // const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-const queryClient = new QueryClient();
-
-// =======================================================
-// ✅ Wrapper that hides Header on specific routes
-// =======================================================
-const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    return (
-        <>
-            {/* {!shouldHideHeader && <Header />} */}
-            {children}
-        </>
-    );
+  return (
+    <div className="flex flex-col h-screen">
+      <Header />
+      <div className="flex flex-1 overflow-hidden">
+        {/* Desktop Sidebar - always visible but can be collapsed visually if state is managed */}
+        <div className="hidden lg:block w-64 flex-shrink-0 border-r overflow-y-auto">
+          <Sidebar />
+        </div>
+        <main className="flex-1 overflow-y-auto bg-background">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/watch/:id" element={<WatchPage />} />
+            <Route path="/search" element={<SearchPage />} />
+            {/* Catch-all for undefined routes */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+      </div>
+    </div>
+  );
 };
-// =======================================================
-
-const App = () => (
-    <div className="font-primarylw">
-        <QueryClientProvider client={queryClient}>
-            <BrowserRouter>
-                <Layout>
-                    <Routes>
-                        <Route path="/" element={<Index />} />
-                    </Routes>
-                </Layout>
-            </BrowserRouter>
-        </QueryClientProvider>
-    </div >
-);
 
 export default App;
